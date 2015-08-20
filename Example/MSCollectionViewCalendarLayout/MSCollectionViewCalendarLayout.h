@@ -69,6 +69,11 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 @property (nonatomic) MSHeaderLayoutType headerLayoutType;
 @property (nonatomic) BOOL displayHeaderBackgroundAtOrigin;
 
+@property (strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
+@property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
+@property (assign, nonatomic) UIEdgeInsets scrollingTriggerEdgeInsets;
+@property (assign, nonatomic) CGFloat scrollingSpeed;
+
 - (NSDate *)dateForTimeRowHeaderAtIndexPath:(NSIndexPath *)indexPath;
 - (NSDate *)dateForDayColumnHeaderAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -88,4 +93,7 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout endTimeForItemAtIndexPath:(NSIndexPath *)indexPath;
 - (NSDate *)currentTimeComponentsForCollectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewLayout;
 
+- (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)indexPath willMoveToDate:(NSDate *)date;
+
 @end
+

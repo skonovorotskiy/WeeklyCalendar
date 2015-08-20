@@ -10,16 +10,21 @@
 
 @implementation MSEvent
 
-@dynamic remoteID;
-@dynamic start;
-@dynamic title;
-@dynamic location;
-@dynamic dateToBeDecided;
-@dynamic timeToBeDecided;
-
 - (NSDate *)day
 {
     return [[NSCalendar currentCalendar] startOfDayForDate:self.start];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    MSEvent *event = [MSEvent new];
+    event.remoteID = self.remoteID;
+    event.start = self.start;
+    event.title = self.title;
+    event.location = self.location;
+    event.timeToBeDecided = self.timeToBeDecided;
+    event.dateToBeDecided = self.dateToBeDecided;
+    return event;
 }
 
 @end

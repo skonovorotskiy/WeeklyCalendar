@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MSEvent : NSManagedObject
+@interface MSEvent : NSObject <NSCopying>
 
 @property (nonatomic, strong) NSNumber *remoteID;
 @property (nonatomic, strong) NSDate *start;

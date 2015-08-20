@@ -18,6 +18,7 @@
 #import "MSTimeRowHeader.h"
 #import "MSCurrentTimeIndicator.h"
 #import "MSCurrentTimeGridline.h"
+#import "MWEventsContainer.h"
 
 NSString * const MSEventCellReuseIdentifier = @"MSEventCellReuseIdentifier";
 NSString * const MSDayColumnHeaderReuseIdentifier = @"MSDayColumnHeaderReuseIdentifier";
@@ -26,8 +27,8 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 @interface MSCalendarViewController () <MSCollectionViewDelegateCalendarLayout, NSFetchedResultsControllerDelegate>
 
 @property (nonatomic, strong) MSCollectionViewCalendarLayout *collectionViewCalendarLayout;
-@property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, readonly) CGFloat layoutSectionWidth;
+@property (nonatomic, strong) MWEventsContainer *eventsContainer;
 
 @end
 
@@ -44,13 +45,13 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    self.collectionView.directionalLockEnabled = YES;
     self.collectionView.backgroundColor = [UIColor whiteColor];
     
     [self.collectionView registerClass:MSEventCell.class forCellWithReuseIdentifier:MSEventCellReuseIdentifier];
     [self.collectionView registerClass:MSDayColumnHeader.class forSupplementaryViewOfKind:MSCollectionElementKindDayColumnHeader withReuseIdentifier:MSDayColumnHeaderReuseIdentifier];
     [self.collectionView registerClass:MSTimeRowHeader.class forSupplementaryViewOfKind:MSCollectionElementKindTimeRowHeader withReuseIdentifier:MSTimeRowHeaderReuseIdentifier];
-
+    
     self.collectionViewCalendarLayout.sectionWidth = self.layoutSectionWidth;
     
     // These are optional. If you don't want any of the decoration views, just don't register a class for them.
@@ -61,16 +62,37 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     [self.collectionViewCalendarLayout registerClass:MSTimeRowHeaderBackground.class forDecorationViewOfKind:MSCollectionElementKindTimeRowHeaderBackground];
     [self.collectionViewCalendarLayout registerClass:MSDayColumnHeaderBackground.class forDecorationViewOfKind:MSCollectionElementKindDayColumnHeaderBackground];
     
-    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Event"];
-    fetchRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"start" ascending:YES]];
-    // No events with undecided times or dates
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"(dateToBeDecided == NO) AND (timeToBeDecided == NO)"];
-    // Divide into sections by the "day" key path
-    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:[RKManagedObjectStore defaultStore].mainQueueManagedObjectContext sectionNameKeyPath:@"day" cacheName:nil];
-    self.fetchedResultsController.delegate = self;
-    [self.fetchedResultsController performFetch:nil];
+    self.eventsContainer = [MWEventsContainer new];
+    self.eventsContainer.sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@keypath(MSEvent.new, start) ascending:YES];
     
-    [self loadData];
+    MSEvent *event = [MSEvent new];
+    event.remoteID = @1;
+    event.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 86400];
+    event.title = @"Event1";
+    event.location = @"Event1 location";
+ 
+//    MSEvent *event2 = [MSEvent new];
+//    event2.remoteID = @2;
+//    event2.start = [NSDate dateWithTimeIntervalSinceNow:2 * 60 * 60];
+//    event2.title = @"Event2";
+//    event2.location = @"Event2 location";
+//
+//    MSEvent *event3 = [MSEvent new];
+//    event3.remoteID = @3;
+//    event3.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 86400];
+//    event3.title = @"Event3";
+//    event3.location = @"Event3 location";
+//
+//    MSEvent *event4 = [MSEvent new];
+//    event4.remoteID = @4;
+//    event4.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 2 * 86400];
+//    event4.title = @"Event4";
+//    event4.location = @"Event4 location";
+
+    [self.eventsContainer addEvent:event forDate:event.day];
+//    [self.eventsContainer addEvent:event2 forDate:event2.day];
+//    [self.eventsContainer addEvent:event3 forDate:event3.day];
+//    [self.eventsContainer addEvent:event3 forDate:event4.day];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -101,21 +123,6 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 
 #pragma mark - MSCalendarViewController
 
-- (void)loadData
-{
-    [[RKObjectManager sharedManager] getObjectsAtPath:@"events" parameters:@{
-        @"lat" : @(39.750),             // Denver latitude
-        @"lon" : @(-104.984),           // Denver longitude
-        @"range" : @"10mi",             // 10mi search radius
-        @"taxonomies.name" : @"sports", // Only "sports" taxonomies
-        @"per_page" : @500              // Up to 500 results
-    } success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
-        NSLog(@"Successfully loaded %@ events", @(mappingResult.count));
-    } failure:^(RKObjectRequestOperation *operation, NSError *error) {
-        [[[UIAlertView alloc] initWithTitle:@"Unable to Load Events" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Continue" otherButtonTitles:nil] show];
-    }];
-}
-
 - (CGFloat)layoutSectionWidth
 {
     // Default to 254 on iPad.
@@ -143,18 +150,19 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-    return self.fetchedResultsController.sections.count;
+    return 20;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [(id <NSFetchedResultsSectionInfo>)self.fetchedResultsController.sections[section] numberOfObjects];
+    NSArray *eventsForDay = [self.eventsContainer eventsForDay:[self dateForSection:section]];
+    return eventsForDay.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     MSEventCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:MSEventCellReuseIdentifier forIndexPath:indexPath];
-    cell.event = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    cell.event = [self eventForIndexPath:indexPath];
     return cell;
 }
 
@@ -181,31 +189,62 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     return view;
 }
 
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+
+- (NSDate *)dateForSection:(NSInteger)section
+{
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:(section * 86400)]; // 86400 - seconds per 24 hours
+    return date;
+}
+
+- (MSEvent *)eventForIndexPath:(NSIndexPath *)indexPath
+{
+    NSArray *events = [self.eventsContainer eventsForDay:[self dateForSection:indexPath.section]];
+    MSEvent *event = events[indexPath.row];
+    return event;
+}
+
 #pragma mark - MSCollectionViewCalendarLayout
 
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout dayForSection:(NSInteger)section
 {
-    id <NSFetchedResultsSectionInfo> sectionInfo = [self.fetchedResultsController.sections objectAtIndex:section];
-    MSEvent *event = [sectionInfo.objects firstObject];
-    return event.day;
+    return [self dateForSection:section];
 }
 
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout startTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    MSEvent *event = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    MSEvent *event = [self eventForIndexPath:indexPath];
     return event.start;
 }
 
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout endTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    MSEvent *event = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    // Most sports last ~3 hours, and SeatGeek doesn't provide an end time
+    MSEvent *event = [self eventForIndexPath:indexPath];
     return [event.start dateByAddingTimeInterval:(60 * 60 * 3)];
 }
 
 - (NSDate *)currentTimeComponentsForCollectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout
 {
     return [NSDate date];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)indexPath willMoveToDate:(NSDate *)date
+{
+    MSEvent *event = [self eventForIndexPath:indexPath];
+    [self.eventsContainer removeEvent:event withDate:event.day];
+    event.start = date;
+    [self.eventsContainer addEvent:event forDate:event.day];
+    
+    @try {
+        [self.collectionView reloadData];
+    }
+    @catch(NSException *exception)
+    {
+        
+    }
 }
 
 @end

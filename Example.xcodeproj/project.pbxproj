@@ -22,7 +22,6 @@
 		3A9EDB9916DD938A0017C4ED /* MSGridline.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDB9816DD938A0017C4ED /* MSGridline.m */; };
 		3A9EDB9C16DD94940017C4ED /* MSTimeRowHeaderBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDB9B16DD94940017C4ED /* MSTimeRowHeaderBackground.m */; };
 		3A9EDBA216DD99E00017C4ED /* MSEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBA116DD99E00017C4ED /* MSEvent.m */; };
-		3A9EDBA616DDA0140017C4ED /* Example.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBA416DDA0140017C4ED /* Example.xcdatamodeld */; };
 		3A9EDBAA16DDA7410017C4ED /* MSEventCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBA916DDA7410017C4ED /* MSEventCell.m */; };
 		3A9EDBAD16DDA8420017C4ED /* MSTimeRowHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBAC16DDA8420017C4ED /* MSTimeRowHeader.m */; };
 		3A9EDBB016DDA8620017C4ED /* MSDayColumnHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBAF16DDA8620017C4ED /* MSDayColumnHeader.m */; };
@@ -31,6 +30,9 @@
 		3A9EDBBB16DE8FEB0017C4ED /* MSCurrentTimeIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBBA16DE8FEB0017C4ED /* MSCurrentTimeIndicator.m */; };
 		73FE75D8C4884452BD700225 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68FEEAE8C40D4C23B857EFA6 /* libPods.a */; };
 		BD4DBC0D1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC0C1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m */; };
+		BD4DBC101B85F7AF00978F4B /* MWEventsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC0F1B85F7AF00978F4B /* MWEventsContainer.m */; };
+		BD4DBC181B8603BC00978F4B /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC141B8603BC00978F4B /* EXTRuntimeExtensions.m */; };
+		BD4DBC191B8603BC00978F4B /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC161B8603BC00978F4B /* EXTScope.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,7 +61,6 @@
 		3A9EDB9B16DD94940017C4ED /* MSTimeRowHeaderBackground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSTimeRowHeaderBackground.m; sourceTree = "<group>"; };
 		3A9EDBA016DD99E00017C4ED /* MSEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSEvent.h; sourceTree = "<group>"; };
 		3A9EDBA116DD99E00017C4ED /* MSEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSEvent.m; sourceTree = "<group>"; };
-		3A9EDBA516DDA0140017C4ED /* Example.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Example.xcdatamodel; sourceTree = "<group>"; };
 		3A9EDBA816DDA7410017C4ED /* MSEventCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSEventCell.h; sourceTree = "<group>"; };
 		3A9EDBA916DDA7410017C4ED /* MSEventCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSEventCell.m; sourceTree = "<group>"; };
 		3A9EDBAB16DDA8420017C4ED /* MSTimeRowHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSTimeRowHeader.h; sourceTree = "<group>"; };
@@ -75,6 +76,14 @@
 		807B751049998BA6C860E999 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		BD4DBC0B1B85F6D500978F4B /* MSCollectionViewCalendarLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSCollectionViewCalendarLayout.h; sourceTree = "<group>"; };
 		BD4DBC0C1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSCollectionViewCalendarLayout.m; sourceTree = "<group>"; };
+		BD4DBC0E1B85F7AF00978F4B /* MWEventsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWEventsContainer.h; sourceTree = "<group>"; };
+		BD4DBC0F1B85F7AF00978F4B /* MWEventsContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWEventsContainer.m; sourceTree = "<group>"; };
+		BD4DBC121B8603BC00978F4B /* EXTKeyPathCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTKeyPathCoding.h; sourceTree = "<group>"; };
+		BD4DBC131B8603BC00978F4B /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTRuntimeExtensions.h; sourceTree = "<group>"; };
+		BD4DBC141B8603BC00978F4B /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTRuntimeExtensions.m; sourceTree = "<group>"; };
+		BD4DBC151B8603BC00978F4B /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScope.h; sourceTree = "<group>"; };
+		BD4DBC161B8603BC00978F4B /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScope.m; sourceTree = "<group>"; };
+		BD4DBC171B8603BC00978F4B /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metamacros.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +151,7 @@
 		3A9EDB7616DD8FF10017C4ED /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				BD4DBC111B8603BC00978F4B /* extobjc */,
 				BD4DBC0A1B85F6D500978F4B /* MSCollectionViewCalendarLayout */,
 				3A9EDB7F16DD8FF10017C4ED /* MSAppDelegate.h */,
 				3A9EDB8016DD8FF10017C4ED /* MSAppDelegate.m */,
@@ -200,9 +210,10 @@
 		3A9EDBA316DD9BFA0017C4ED /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				3A9EDBA416DDA0140017C4ED /* Example.xcdatamodeld */,
 				3A9EDBA016DD99E00017C4ED /* MSEvent.h */,
 				3A9EDBA116DD99E00017C4ED /* MSEvent.m */,
+				BD4DBC0E1B85F7AF00978F4B /* MWEventsContainer.h */,
+				BD4DBC0F1B85F7AF00978F4B /* MWEventsContainer.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -223,6 +234,19 @@
 				BD4DBC0C1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m */,
 			);
 			path = MSCollectionViewCalendarLayout;
+			sourceTree = "<group>";
+		};
+		BD4DBC111B8603BC00978F4B /* extobjc */ = {
+			isa = PBXGroup;
+			children = (
+				BD4DBC121B8603BC00978F4B /* EXTKeyPathCoding.h */,
+				BD4DBC131B8603BC00978F4B /* EXTRuntimeExtensions.h */,
+				BD4DBC141B8603BC00978F4B /* EXTRuntimeExtensions.m */,
+				BD4DBC151B8603BC00978F4B /* EXTScope.h */,
+				BD4DBC161B8603BC00978F4B /* EXTScope.m */,
+				BD4DBC171B8603BC00978F4B /* metamacros.h */,
+			);
+			path = extobjc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -328,13 +352,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD4DBC191B8603BC00978F4B /* EXTScope.m in Sources */,
 				3A9EDB7D16DD8FF10017C4ED /* main.m in Sources */,
+				BD4DBC181B8603BC00978F4B /* EXTRuntimeExtensions.m in Sources */,
 				3A9EDB8116DD8FF10017C4ED /* MSAppDelegate.m in Sources */,
 				3A9EDB9416DD913A0017C4ED /* MSCalendarViewController.m in Sources */,
+				BD4DBC101B85F7AF00978F4B /* MWEventsContainer.m in Sources */,
 				3A9EDB9916DD938A0017C4ED /* MSGridline.m in Sources */,
 				3A9EDB9C16DD94940017C4ED /* MSTimeRowHeaderBackground.m in Sources */,
 				3A9EDBA216DD99E00017C4ED /* MSEvent.m in Sources */,
-				3A9EDBA616DDA0140017C4ED /* Example.xcdatamodeld in Sources */,
 				3A9EDBAA16DDA7410017C4ED /* MSEventCell.m in Sources */,
 				3A9EDBAD16DDA8420017C4ED /* MSTimeRowHeader.m in Sources */,
 				3A9EDBB016DDA8620017C4ED /* MSDayColumnHeader.m in Sources */,
@@ -497,19 +523,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		3A9EDBA416DDA0140017C4ED /* Example.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				3A9EDBA516DDA0140017C4ED /* Example.xcdatamodel */,
-			);
-			currentVersion = 3A9EDBA516DDA0140017C4ED /* Example.xcdatamodel */;
-			path = Example.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 3A9EDB6516DD8FF10017C4ED /* Project object */;
 }
