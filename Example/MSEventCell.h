@@ -10,7 +10,7 @@
 
 @class MSEvent;
 
-@interface MSEventCell : UICollectionViewCell
+@interface MSEventCell : UICollectionViewCell <NSCopying>
 
 @property (nonatomic, weak) MSEvent *event;
 

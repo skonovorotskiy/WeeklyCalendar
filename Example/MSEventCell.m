@@ -154,4 +154,16 @@
     return [[self backgroundColorHighlighted:NO] colorWithAlphaComponent:1.0];
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    MSEventCell *cell = [[MSEventCell alloc] initWithFrame:self.frame];
+    cell.event = self.event;
+    cell.title = self.title;
+    cell.location = self.location;
+    cell.selected = self.selected;
+    return cell;
+}
+
 @end

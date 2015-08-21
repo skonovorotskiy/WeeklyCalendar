@@ -67,32 +67,32 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     
     MSEvent *event = [MSEvent new];
     event.remoteID = @1;
-    event.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 86400];
+    event.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60];
     event.title = @"Event1";
     event.location = @"Event1 location";
  
-//    MSEvent *event2 = [MSEvent new];
-//    event2.remoteID = @2;
-//    event2.start = [NSDate dateWithTimeIntervalSinceNow:2 * 60 * 60];
-//    event2.title = @"Event2";
-//    event2.location = @"Event2 location";
-//
-//    MSEvent *event3 = [MSEvent new];
-//    event3.remoteID = @3;
-//    event3.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 86400];
-//    event3.title = @"Event3";
-//    event3.location = @"Event3 location";
-//
-//    MSEvent *event4 = [MSEvent new];
-//    event4.remoteID = @4;
-//    event4.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 2 * 86400];
-//    event4.title = @"Event4";
-//    event4.location = @"Event4 location";
+    MSEvent *event2 = [MSEvent new];
+    event2.remoteID = @2;
+    event2.start = [NSDate dateWithTimeIntervalSinceNow:2 * 60 * 60];
+    event2.title = @"Event2";
+    event2.location = @"Event2 location";
+
+    MSEvent *event3 = [MSEvent new];
+    event3.remoteID = @3;
+    event3.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 86400];
+    event3.title = @"Event3";
+    event3.location = @"Event3 location";
+
+    MSEvent *event4 = [MSEvent new];
+    event4.remoteID = @4;
+    event4.start = [NSDate dateWithTimeIntervalSinceNow:2 * 60 * 60 + 2 * 86400];
+    event4.title = @"Event4";
+    event4.location = @"Event4 location";
 
     [self.eventsContainer addEvent:event forDate:event.day];
-//    [self.eventsContainer addEvent:event2 forDate:event2.day];
-//    [self.eventsContainer addEvent:event3 forDate:event3.day];
-//    [self.eventsContainer addEvent:event3 forDate:event4.day];
+    [self.eventsContainer addEvent:event2 forDate:event2.day];
+    [self.eventsContainer addEvent:event3 forDate:event3.day];
+    [self.eventsContainer addEvent:event4 forDate:event4.day];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -127,7 +127,7 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 {
     // Default to 254 on iPad.
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return 254.0;
+        return 138.0;
     }
 
     // Otherwise, on iPhone, fit-to-width.
@@ -238,13 +238,7 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     event.start = date;
     [self.eventsContainer addEvent:event forDate:event.day];
     
-    @try {
-        [self.collectionView reloadData];
-    }
-    @catch(NSException *exception)
-    {
-        
-    }
+    [self.collectionView reloadData];
 }
 
 @end
