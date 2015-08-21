@@ -1420,17 +1420,17 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             collectionViewCell.frame = layoutAttributes.frame;
             dispatch_async(dispatch_get_main_queue(), ^{
                 UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
-                [self withCell:cell];
+                [self startMovingCell:cell];
             });
         }
     }
     else if (collectionViewCell) {
         self.selectedItemIndexPath = currentIndexPath;
-        [self withCell:collectionViewCell];
+        [self startMovingCell:collectionViewCell];
     }
 }
 
-- (void)withCell:(UICollectionViewCell *)collectionViewCell
+- (void)startMovingCell:(UICollectionViewCell *)collectionViewCell
 {
     self.currentView = [[UIView alloc] initWithFrame:
                         CGRectMake([self rectForSection:self.selectedItemIndexPath.section].origin.x,
@@ -1471,10 +1471,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
     
     if (currentIndexPath) {
-        UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
-        [UIView animateWithDuration:0.3 animations:^{
-            collectionViewCell.alpha = 0.0;
-        }];
         self.selectedItemIndexPath = nil;
         self.currentViewCenter = CGPointZero;
         
