@@ -16,5 +16,6 @@
 - (void)removeEvent:(id)event withDate:(NSDate *)date;
 - (NSArray *)eventsForDay:(NSDate *)day;
 - (NSArray *)allEvents;
+- (NSInteger)indexForEvent:(id)event withDate:(NSDate *)date;
 
 @end

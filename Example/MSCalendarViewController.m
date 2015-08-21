@@ -89,10 +89,10 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     event4.title = @"Event4";
     event4.location = @"Event4 location";
 
-    [self.eventsContainer addEvent:event forDate:event.day];
-    [self.eventsContainer addEvent:event2 forDate:event2.day];
-    [self.eventsContainer addEvent:event3 forDate:event3.day];
-    [self.eventsContainer addEvent:event4 forDate:event4.day];
+//    [self.eventsContainer addEvent:event forDate:event.day];
+//    [self.eventsContainer addEvent:event2 forDate:event2.day];
+//    [self.eventsContainer addEvent:event3 forDate:event3.day];
+//    [self.eventsContainer addEvent:event4 forDate:event4.day];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -237,8 +237,17 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     [self.eventsContainer removeEvent:event withDate:event.day];
     event.start = date;
     [self.eventsContainer addEvent:event forDate:event.day];
-    
-    [self.collectionView reloadData];
+}
+
+- (void)collectionView:(UICollectionView *)collectionView createNewItemWithDate:(NSDate *)date
+{
+    static int i = 5;
+    MSEvent *event = [MSEvent new];
+    event.remoteID = @(i);
+    event.start = date;
+    event.title = [NSString stringWithFormat:@"Event%d", i];
+    event.location = [NSString stringWithFormat:@"Event%d location", i++];
+    [self.eventsContainer addEvent:event forDate:event.day];
 }
 
 @end

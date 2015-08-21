@@ -28,14 +28,6 @@
 
 #import "MSCollectionViewCalendarLayout.h"
 
-typedef NS_ENUM(NSInteger, LXScrollingDirection) {
-    LXScrollingDirectionUnknown = 0,
-    LXScrollingDirectionUp,
-    LXScrollingDirectionDown,
-    LXScrollingDirectionLeft,
-    LXScrollingDirectionRight
-};
-
 NSString * const MSCollectionElementKindTimeRowHeader = @"MSCollectionElementKindTimeRow";
 NSString * const MSCollectionElementKindDayColumnHeader = @"MSCollectionElementKindDayHeader";
 NSString * const MSCollectionElementKindTimeRowHeaderBackground = @"MSCollectionElementKindTimeRowHeaderBackground";
@@ -72,9 +64,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 }
 
 @end
-
-
-
 
 @interface MSTimerWeakTarget : NSObject
 @property (nonatomic, weak) id target;
@@ -1349,16 +1338,32 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     self.panGestureRecognizer.enabled = YES;
 }
 
+#pragma mark - Key-Value Observing methods
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kLXCollectionViewKeyPath]) {
+        if (self.collectionView != nil) {
+            [self setupCollectionView];
+        }
+        else {
+            [self tearDownCollectionView];
+        }
+    }
+}
+
 #pragma mark - UIGestureRecognizerDelegate methods
 
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
     if ([self.panGestureRecognizer isEqual:gestureRecognizer]) {
         return (self.selectedItemIndexPath != nil);
     }
     return YES;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
     if ([self.longPressGestureRecognizer isEqual:gestureRecognizer]) {
         return [self.panGestureRecognizer isEqual:otherGestureRecognizer];
     }
@@ -1370,116 +1375,15 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     return NO;
 }
 
-#pragma mark - Key-Value Observing methods
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:kLXCollectionViewKeyPath]) {
-        if (self.collectionView != nil) {
-            [self setupCollectionView];
-        }
-        else {
-            //            [self invalidatesScrollTimer];
-            [self tearDownCollectionView];
-        }
-    }
-}
-
-#pragma mark - UIGestureRecognizers
-
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer
 {
     switch(gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
-            NSIndexPath *currentIndexPath = [self.collectionView indexPathForItemAtPoint:[gestureRecognizer locationInView:self.collectionView]];
-            
-            self.selectedItemIndexPath = currentIndexPath;
-            
-            UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:self.selectedItemIndexPath];
-            
-            self.currentView = [[UIView alloc] initWithFrame:
-                                CGRectMake([self rectForSection:self.selectedItemIndexPath.section].origin.x,
-                                           collectionViewCell.frame.origin.y,
-                                           [self sectionWidth],
-                                           collectionViewCell.frame.size.height)];
-            
-            collectionViewCell.highlighted = YES;
-            UIView *highlightedImageView = [collectionViewCell LX_snapshotView];
-            highlightedImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            highlightedImageView.alpha = 1.0f;
-            collectionViewCell.highlighted = NO;
-            
-            UICollectionViewCell *collectionViewCell2 = [collectionViewCell copy];
-            collectionViewCell2.frame = self.currentView.frame;
-            UIView *imageView = [collectionViewCell2 LX_snapshotView];
-            imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            imageView.alpha = 0.0f;
-            
-            [self.currentView addSubview:imageView];
-            [self.currentView addSubview:highlightedImageView];
-            [self.collectionView addSubview:self.currentView];
-            
-            self.currentViewCenter = self.currentView.center;
-            
-            __weak typeof(self) weakSelf = self;
-            [UIView
-             animateWithDuration:0.3
-             delay:0.0
-             options:UIViewAnimationOptionBeginFromCurrentState
-             animations:^{
-                 __strong typeof(self) strongSelf = weakSelf;
-                 if (strongSelf) {
-                     strongSelf.currentView.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
-                     highlightedImageView.alpha = 0.0f;
-                     imageView.alpha = 1.0f;
-                 }
-             }
-             completion:^(BOOL finished) {
-                 __strong typeof(self) strongSelf = weakSelf;
-                 if (strongSelf) {
-                     [highlightedImageView removeFromSuperview];
-                     
-                 }
-             }];
-            
-            [self invalidateLayout];
+            [self longPressGestureBegan:gestureRecognizer];
         } break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
-            NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
-            
-            if (currentIndexPath) {
-                self.selectedItemIndexPath = nil;
-                self.currentViewCenter = CGPointZero;
-                
-                //UICollectionViewLayoutAttributes *layoutAttributes = [self layoutAttributesForItemAtIndexPath:currentIndexPath];
-                
-                __weak typeof(self) weakSelf = self;
-                [UIView
-                 animateWithDuration:0.3
-                 delay:0.0
-                 options:UIViewAnimationOptionBeginFromCurrentState
-                 animations:^{
-                     __strong typeof(self) strongSelf = weakSelf;
-                     if (strongSelf) {
-                         strongSelf.currentView.transform = CGAffineTransformMakeScale(1.0f, 1.0f);
-                         //strongSelf.currentView.center = layoutAttributes.center;
-                     }
-                 }
-                 completion:^(BOOL finished) {
-                     
-                     
-                     __strong typeof(self) strongSelf = weakSelf;
-                     if (strongSelf) {
-                         [strongSelf didMoveItemAtIndexPath:currentIndexPath];
-                         
-                         [strongSelf.currentView removeFromSuperview];
-                         strongSelf.currentView = nil;
-                         [strongSelf invalidateLayout];
-                         [strongSelf invalidateLayoutCache];
-                     }
-                 }];
-            }
+            [self longPressGestureEnded];
         } break;
             
         default: break;
@@ -1490,22 +1394,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
-            CGPoint panTranslationInCollectionView = [gestureRecognizer translationInView:self.collectionView];
-            CGFloat calendarContentMinX = (self.timeRowHeaderWidth + self.contentMargin.left + self.sectionMargin.left);
-            NSInteger newSection = floorf((self.currentViewCenter.x + panTranslationInCollectionView.x - calendarContentMinX) / self.sectionWidth);
-            CGPoint viewCenter = self.currentView.center = CGPointMake(CGRectGetMidX([self rectForSection:newSection]), self.currentViewCenter.y + panTranslationInCollectionView.y);
-            if (viewCenter.y < (CGRectGetMinY(self.collectionView.bounds) + self.scrollingTriggerEdgeInsets.top)) {
-
-            }
-            else if (viewCenter.y > (CGRectGetMaxY(self.collectionView.bounds) - self.scrollingTriggerEdgeInsets.bottom)) {
-
-            }
-            else {
-
-            }
-        } break;
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateEnded: {
+            [self panGestureChanged:gestureRecognizer];
         } break;
         default: {
         } break;
@@ -1514,23 +1403,147 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 
 #pragma mark -
 
+- (void)longPressGestureBegan:(UIGestureRecognizer *)gestureRecognizer
+{
+    CGPoint locationInCollectionView = [gestureRecognizer locationInView:self.collectionView];
+    NSIndexPath *currentIndexPath = [self.collectionView indexPathForItemAtPoint:locationInCollectionView];
+    UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
+    if (!currentIndexPath) {
+        [self invalidateLayoutCache];
+        [self.delegate collectionView:self.collectionView createNewItemWithDate:[self dateForPoint:locationInCollectionView]];
+        [self.collectionView reloadData];
+        
+        currentIndexPath = [self.collectionView indexPathForItemAtPoint:locationInCollectionView];
+        if (currentIndexPath) {
+            self.selectedItemIndexPath = currentIndexPath;
+            UICollectionViewLayoutAttributes *layoutAttributes = [self layoutAttributesForItemAtIndexPath:currentIndexPath];
+            collectionViewCell.frame = layoutAttributes.frame;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
+                [self withCell:cell];
+            });
+        }
+    }
+    else if (collectionViewCell) {
+        self.selectedItemIndexPath = currentIndexPath;
+        [self withCell:collectionViewCell];
+    }
+}
+
+- (void)withCell:(UICollectionViewCell *)collectionViewCell
+{
+    self.currentView = [[UIView alloc] initWithFrame:
+                        CGRectMake([self rectForSection:self.selectedItemIndexPath.section].origin.x,
+                                   collectionViewCell.frame.origin.y,
+                                   [self sectionWidth],
+                                   collectionViewCell.frame.size.height)];
+    UICollectionViewCell *collectionViewCell2 = [collectionViewCell copy];
+    [UIView animateWithDuration:0.3 animations:^{
+        collectionViewCell.alpha = 0.5;
+    }];
+    collectionViewCell2.frame = self.currentView.frame;
+    UIView *imageView = [collectionViewCell2 LX_snapshotView];
+    imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    imageView.alpha = 0.0f;
+    
+    [self.currentView addSubview:imageView];
+    [self.collectionView addSubview:self.currentView];
+    self.currentViewCenter = self.currentView.center;
+    
+    __weak typeof(self) weakSelf = self;
+    [UIView animateWithDuration:0.3
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                         __strong typeof(self) strongSelf = weakSelf;
+                         if (strongSelf) {
+                             strongSelf.currentView.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+                             imageView.alpha = 1.0f;
+                         }
+                     }
+                     completion:nil];
+    
+    [self invalidateLayout];
+}
+
+- (void)longPressGestureEnded
+{
+    NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
+    
+    if (currentIndexPath) {
+        UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
+        [UIView animateWithDuration:0.3 animations:^{
+            collectionViewCell.alpha = 0.0;
+        }];
+        self.selectedItemIndexPath = nil;
+        self.currentViewCenter = CGPointZero;
+        
+        __weak typeof(self) weakSelf = self;
+        [UIView animateWithDuration:0.3
+                              delay:0.0
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^{
+                             __strong typeof(self) strongSelf = weakSelf;
+                             if (strongSelf) {
+                                 strongSelf.currentView.transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+                             }
+                         }
+                         completion:^(BOOL finished) {
+                             __strong typeof(self) strongSelf = weakSelf;
+                             if (strongSelf) {
+                                 [strongSelf didMoveItemAtIndexPath:currentIndexPath];
+                                 
+                                 [strongSelf.currentView removeFromSuperview];
+                                 strongSelf.currentView = nil;
+                                 [strongSelf invalidateLayout];
+                                 [strongSelf invalidateLayoutCache];
+                             }
+                         }];
+    }
+}
+
+- (void)panGestureChanged:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    CGPoint panTranslationInCollectionView = [gestureRecognizer translationInView:self.collectionView];
+    CGFloat calendarContentMinX = (self.timeRowHeaderWidth + self.contentMargin.left + self.sectionMargin.left);
+    NSInteger newSection = floorf((self.currentViewCenter.x + panTranslationInCollectionView.x - calendarContentMinX) / self.sectionWidth);
+    if (newSection < 0) newSection = 0;
+    CGPoint viewCenter = self.currentView.center = CGPointMake(CGRectGetMidX([self rectForSection:newSection]), self.currentViewCenter.y + panTranslationInCollectionView.y);
+    if (viewCenter.y < (CGRectGetMinY(self.collectionView.bounds) + self.scrollingTriggerEdgeInsets.top)) {
+        
+    }
+    else if (viewCenter.y > (CGRectGetMaxY(self.collectionView.bounds) - self.scrollingTriggerEdgeInsets.bottom)) {
+        
+    }
+    else {
+        
+    }
+}
+
 - (void)didMoveItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat calendarContentMinX = (self.timeRowHeaderWidth + self.contentMargin.left + self.sectionMargin.left);
-    NSInteger newSection = floorf((self.currentView.center.x - calendarContentMinX) / self.sectionWidth);
-    CGFloat height = [self sectionHeight:newSection];
-    NSInteger earlier = [self earliestHourForSection:newSection];
-    NSInteger latest = [self latestHourForSection:newSection];
-    CGFloat pointsPerHour = height / (latest - earlier);
-    NSDate *day = [self.delegate collectionView:self.collectionView layout:self dayForSection:newSection];
-    NSDate *startOfDay = [[NSCalendar currentCalendar] startOfDayForDate:day];
-    CGFloat calendarContentMinY = (self.dayColumnHeaderHeight + self.contentMargin.top + self.sectionMargin.top);
-    NSTimeInterval timeInterval = (self.currentView.frame.origin.y - calendarContentMinY) / pointsPerHour * 3600;
-    NSDate *newDate = [startOfDay dateByAddingTimeInterval:timeInterval];
+    NSDate *newDate = [self dateForPoint:CGPointMake(self.currentView.center.x, self.currentView.frame.origin.y)];
     
     if ([self.delegate respondsToSelector:@selector(collectionView:itemAtIndexPath:willMoveToDate:)]) {
         [self.delegate collectionView:self.collectionView itemAtIndexPath:indexPath willMoveToDate:newDate];
+        [self.collectionView reloadData];
     }
+}
+
+- (NSDate *)dateForPoint:(CGPoint)point
+{
+    CGFloat calendarContentMinX = (self.timeRowHeaderWidth + self.contentMargin.left + self.sectionMargin.left);
+    NSInteger section = floorf((point.x - calendarContentMinX) / self.sectionWidth);
+    NSDate *day = [self.delegate collectionView:self.collectionView layout:self dayForSection:section];
+    NSDate *startOfDay = [[NSCalendar currentCalendar] startOfDayForDate:day];
+    CGFloat calendarContentMinY = (self.dayColumnHeaderHeight + self.contentMargin.top + self.sectionMargin.top);
+    CGFloat height = [self sectionHeight:section];
+    NSInteger earlier = [self earliestHourForSection:section];
+    NSInteger latest = [self latestHourForSection:section];
+    CGFloat pointsPerHour = height / (latest - earlier);
+    NSTimeInterval timeInterval = (point.y - calendarContentMinY) / pointsPerHour * 3600;
+    NSDate *date = [startOfDay dateByAddingTimeInterval:timeInterval];
+    return date;
 }
 
 @end
