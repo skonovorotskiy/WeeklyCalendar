@@ -1410,10 +1410,10 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
     if (!currentIndexPath) {
         [self invalidateLayoutCache];
-        [self.delegate collectionView:self.collectionView createNewItemWithDate:[self dateForPoint:locationInCollectionView]];
+        currentIndexPath = [self.delegate collectionView:self.collectionView createNewItemWithDate:[self dateForPoint:locationInCollectionView]];
         [self.collectionView reloadData];
         
-        currentIndexPath = [self.collectionView indexPathForItemAtPoint:locationInCollectionView];
+//        currentIndexPath = [self.collectionView indexPathForItemAtPoint:locationInCollectionView];
         if (currentIndexPath) {
             self.selectedItemIndexPath = currentIndexPath;
             UICollectionViewLayoutAttributes *layoutAttributes = [self layoutAttributesForItemAtIndexPath:currentIndexPath];
@@ -1471,6 +1471,13 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
     
     if (currentIndexPath) {
+        UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
+        if (collectionViewCell.alpha == 0.5) {
+            [UIView animateWithDuration:0.3 animations:^{
+                collectionViewCell.alpha = 0.0;
+            }];
+        }
+
         self.selectedItemIndexPath = nil;
         self.currentViewCenter = CGPointZero;
         

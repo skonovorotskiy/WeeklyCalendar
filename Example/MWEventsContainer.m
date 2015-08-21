@@ -69,5 +69,10 @@
     return @(day);
 }
 
+- (NSInteger)indexForEvent:(id)event withDate:(NSDate *)date
+{
+    NSMutableArray *events = self.dictionaty[[self dayNumberForDate:date]];
+    return [events indexOfObject:event];
+}
 
 @end

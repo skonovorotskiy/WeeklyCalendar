@@ -163,6 +163,7 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 {
     MSEventCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:MSEventCellReuseIdentifier forIndexPath:indexPath];
     cell.event = [self eventForIndexPath:indexPath];
+    cell.alpha = 1.0;
     return cell;
 }
 
@@ -196,8 +197,14 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 
 - (NSDate *)dateForSection:(NSInteger)section
 {
-    NSDate *date = [NSDate dateWithTimeIntervalSinceNow:(section * 86400)]; // 86400 - seconds per 24 hours
+    NSDate *date = [[NSCalendar currentCalendar] startOfDayForDate:[NSDate dateWithTimeIntervalSinceNow:(section * 86400)]]; // 86400 - seconds per 24 hours
     return date;
+}
+
+- (NSInteger)sectionForDate:(NSDate *)date
+{
+    NSDate *startOfToday = [[NSCalendar currentCalendar] startOfDayForDate:[NSDate date]];
+    return roundf([date timeIntervalSinceDate:startOfToday] / 86400); // 86400 - seconds per 24 hours
 }
 
 - (MSEvent *)eventForIndexPath:(NSIndexPath *)indexPath
@@ -234,12 +241,14 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 - (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)indexPath willMoveToDate:(NSDate *)date
 {
     MSEvent *event = [self eventForIndexPath:indexPath];
-    [self.eventsContainer removeEvent:event withDate:event.day];
-    event.start = date;
-    [self.eventsContainer addEvent:event forDate:event.day];
+    if (event) {
+        [self.eventsContainer removeEvent:event withDate:event.day];
+        event.start = date;
+        [self.eventsContainer addEvent:event forDate:event.day];
+    }
 }
 
-- (void)collectionView:(UICollectionView *)collectionView createNewItemWithDate:(NSDate *)date
+- (NSIndexPath *)collectionView:(UICollectionView *)collectionView createNewItemWithDate:(NSDate *)date
 {
     static int i = 5;
     MSEvent *event = [MSEvent new];
@@ -248,6 +257,8 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     event.title = [NSString stringWithFormat:@"Event%d", i];
     event.location = [NSString stringWithFormat:@"Event%d location", i++];
     [self.eventsContainer addEvent:event forDate:event.day];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.eventsContainer indexForEvent:event withDate:event.day] inSection:[self sectionForDate:event.day]];
+    return indexPath;
 }
 
 @end
