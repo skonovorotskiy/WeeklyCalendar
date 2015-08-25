@@ -282,7 +282,7 @@
 				ORGANIZATIONNAME = "Eric Horacek";
 				TargetAttributes = {
 					3A9EDB6C16DD8FF10017C4ED = {
-						DevelopmentTeam = 9638K94DUG;
+						DevelopmentTeam = JRKY2H8NHP;
 					};
 				};
 			};
@@ -477,6 +477,7 @@
 			baseConfigurationReference = 121006CAEA5696D8D43C538A /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Example/Example-Prefix.pch";
 				INFOPLIST_FILE = "Example/Example-Info.plist";
@@ -491,6 +492,7 @@
 			baseConfigurationReference = 807B751049998BA6C860E999 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Example/Example-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;

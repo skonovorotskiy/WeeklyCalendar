@@ -95,6 +95,7 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 
 - (void)collectionView:(UICollectionView *)collectionView itemAtIndexPath:(NSIndexPath *)indexPath willMoveToDate:(NSDate *)date;
 - (NSIndexPath *)collectionView:(UICollectionView *)collectionView createNewItemWithDate:(NSDate *)date;
+- (void)collectionView:(UICollectionView *)collectionView removeItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

@@ -261,4 +261,12 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     return indexPath;
 }
 
+- (void)collectionView:(UICollectionView *)collectionView removeItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    MSEvent *event = [self eventForIndexPath:indexPath];
+    if (event) {
+        [self.eventsContainer removeEvent:event withDate:event.day];
+    }
+}
+
 @end

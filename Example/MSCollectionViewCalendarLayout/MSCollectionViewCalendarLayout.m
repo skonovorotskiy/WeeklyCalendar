@@ -28,6 +28,12 @@
 
 #import "MSCollectionViewCalendarLayout.h"
 
+struct TouchInfo {
+    CGPoint point;
+    CFAbsoluteTime time;
+    CGVector velocity;
+};
+
 NSString * const MSCollectionElementKindTimeRowHeader = @"MSCollectionElementKindTimeRow";
 NSString * const MSCollectionElementKindDayColumnHeader = @"MSCollectionElementKindDayHeader";
 NSString * const MSCollectionElementKindTimeRowHeaderBackground = @"MSCollectionElementKindTimeRowHeaderBackground";
@@ -95,6 +101,9 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 @end
 
 @interface MSCollectionViewCalendarLayout () <UIGestureRecognizerDelegate>
+{
+    struct TouchInfo _addingEventTouchInfo;
+}
 
 // Minute Timer
 @property (nonatomic, strong) NSTimer *minuteTimer;
@@ -1390,9 +1399,10 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     }
 }
 
-- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
+- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer
+{
     switch (gestureRecognizer.state) {
-        case UIGestureRecognizerStateBegan:
+         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
             [self panGestureChanged:gestureRecognizer];
         } break;
@@ -1402,6 +1412,46 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 }
 
 #pragma mark -
+
+- (void)fillAddingEventTouchInfoWithPoint:(CGPoint)point
+{
+    CFAbsoluteTime time = CFAbsoluteTimeGetCurrent();
+    if (_addingEventTouchInfo.time){
+        CFTimeInterval timeInterval = time - _addingEventTouchInfo.time;
+        _addingEventTouchInfo.velocity = CGVectorMake((point.x - _addingEventTouchInfo.point.x) / timeInterval,
+                                                      (point.y - _addingEventTouchInfo.point.y) / timeInterval);
+        CGVector velocity = _addingEventTouchInfo.velocity;
+        CGFloat velocityVectorLength = sqrt(velocity.dx * velocity.dx + velocity.dy * velocity.dy);
+        NSLog(@"X=%f Y=%f TimeInt=%f Vel=%f", point.x, point.y, timeInterval, velocityVectorLength);
+
+        _addingEventTouchInfo.point = point;
+    }
+    _addingEventTouchInfo.time = time;
+}
+
+- (void)removeCurerntEventAnimated
+{
+    CGVector velocity = _addingEventTouchInfo.velocity;
+    NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
+    if (currentIndexPath) {
+        self.selectedItemIndexPath = nil;
+        CGRect targetRect = self.currentView.frame;
+        NSTimeInterval duration = 0.3;
+        targetRect.origin.x += velocity.dx * duration;
+        targetRect.origin.y += velocity.dy * duration;
+        [UIView animateWithDuration:duration animations:^{
+            self.currentView.frame = targetRect;
+            self.currentView.alpha = 0.f;
+        } completion:^(BOOL finished) {
+            self.currentViewCenter = CGPointZero;
+
+            [self.currentView removeFromSuperview];
+            self.currentView = nil;
+            [self invalidateLayout];
+            [self invalidateLayoutCache];
+        }];
+    }
+}
 
 - (void)longPressGestureBegan:(UIGestureRecognizer *)gestureRecognizer
 {
@@ -1469,6 +1519,14 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 - (void)longPressGestureEnded
 {
     NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
+    if (currentIndexPath) {
+        [self removeCurrentView];
+    }
+}
+
+- (void)removeCurrentView
+{
+    NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
     
     if (currentIndexPath) {
         UICollectionViewCell *collectionViewCell = [self.collectionView cellForItemAtIndexPath:currentIndexPath];
@@ -1477,7 +1535,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
                 collectionViewCell.alpha = 0.0;
             }];
         }
-
+        
         self.selectedItemIndexPath = nil;
         self.currentViewCenter = CGPointZero;
         
@@ -1507,19 +1565,38 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 
 - (void)panGestureChanged:(UIPanGestureRecognizer *)gestureRecognizer
 {
-    CGPoint panTranslationInCollectionView = [gestureRecognizer translationInView:self.collectionView];
-    CGFloat calendarContentMinX = (self.timeRowHeaderWidth + self.contentMargin.left + self.sectionMargin.left);
-    NSInteger newSection = floorf((self.currentViewCenter.x + panTranslationInCollectionView.x - calendarContentMinX) / self.sectionWidth);
-    if (newSection < 0) newSection = 0;
-    CGPoint viewCenter = self.currentView.center = CGPointMake(CGRectGetMidX([self rectForSection:newSection]), self.currentViewCenter.y + panTranslationInCollectionView.y);
-    if (viewCenter.y < (CGRectGetMinY(self.collectionView.bounds) + self.scrollingTriggerEdgeInsets.top)) {
+    NSIndexPath *currentIndexPath = self.selectedItemIndexPath;
+    if (currentIndexPath) {
+        CGPoint locationInCollectionView = [gestureRecognizer locationInView:self.collectionView];
+        [self fillAddingEventTouchInfoWithPoint:locationInCollectionView];
+        CGVector velocity = _addingEventTouchInfo.velocity;
+        CGFloat velocityVectorLength = sqrt(velocity.dx * velocity.dx + velocity.dy * velocity.dy);
+        if (velocityVectorLength > 5000) {
+            if ([self.delegate respondsToSelector:@selector(collectionView:removeItemAtIndexPath:)]) {
+                [self.delegate collectionView:self.collectionView removeItemAtIndexPath:currentIndexPath];
+                [self invalidateLayoutCache];
+                [self.collectionView reloadData];
+                [self removeCurerntEventAnimated];
+            }
+            return;
+        }
         
-    }
-    else if (viewCenter.y > (CGRectGetMaxY(self.collectionView.bounds) - self.scrollingTriggerEdgeInsets.bottom)) {
+        CGPoint panTranslationInCollectionView = [gestureRecognizer translationInView:self.collectionView];
+        CGFloat calendarContentMinX = (self.timeRowHeaderWidth + self.contentMargin.left + self.sectionMargin.left);
+        NSInteger newSection = floorf((self.currentViewCenter.x + panTranslationInCollectionView.x - calendarContentMinX) / self.sectionWidth);
+        if (newSection < 0) newSection = 0;
+        self.currentView.center = CGPointMake(CGRectGetMidX([self rectForSection:newSection]), self.currentViewCenter.y + panTranslationInCollectionView.y);
         
-    }
-    else {
-        
+        CGPoint viewCenter = self.currentView.center;
+        if (viewCenter.y < (CGRectGetMinY(self.collectionView.bounds) + self.scrollingTriggerEdgeInsets.top)) {
+            
+        }
+        else if (viewCenter.y > (CGRectGetMaxY(self.collectionView.bounds) - self.scrollingTriggerEdgeInsets.bottom)) {
+            
+        }
+        else {
+            
+        }
     }
 }
 
