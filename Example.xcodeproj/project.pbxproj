@@ -29,6 +29,8 @@
 		3A9EDBB816DE8FAF0017C4ED /* MSCurrentTimeGridline.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBB716DE8FAF0017C4ED /* MSCurrentTimeGridline.m */; };
 		3A9EDBBB16DE8FEB0017C4ED /* MSCurrentTimeIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A9EDBBA16DE8FEB0017C4ED /* MSCurrentTimeIndicator.m */; };
 		73FE75D8C4884452BD700225 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68FEEAE8C40D4C23B857EFA6 /* libPods.a */; };
+		BD1941261B8DD10900D37054 /* TimeRowMinutesHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = BD1941251B8DD10900D37054 /* TimeRowMinutesHeader.m */; };
+		BD1941291B8E091900D37054 /* NonworkingHoursBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = BD1941281B8E091900D37054 /* NonworkingHoursBackgroundView.m */; };
 		BD4DBC0D1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC0C1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m */; };
 		BD4DBC101B85F7AF00978F4B /* MWEventsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC0F1B85F7AF00978F4B /* MWEventsContainer.m */; };
 		BD4DBC181B8603BC00978F4B /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC141B8603BC00978F4B /* EXTRuntimeExtensions.m */; };
@@ -74,6 +76,10 @@
 		3A9EDBBA16DE8FEB0017C4ED /* MSCurrentTimeIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSCurrentTimeIndicator.m; sourceTree = "<group>"; };
 		68FEEAE8C40D4C23B857EFA6 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		807B751049998BA6C860E999 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		BD1941241B8DD10900D37054 /* TimeRowMinutesHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeRowMinutesHeader.h; sourceTree = "<group>"; };
+		BD1941251B8DD10900D37054 /* TimeRowMinutesHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeRowMinutesHeader.m; sourceTree = "<group>"; };
+		BD1941271B8E091900D37054 /* NonworkingHoursBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NonworkingHoursBackgroundView.h; sourceTree = "<group>"; };
+		BD1941281B8E091900D37054 /* NonworkingHoursBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NonworkingHoursBackgroundView.m; sourceTree = "<group>"; };
 		BD4DBC0B1B85F6D500978F4B /* MSCollectionViewCalendarLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSCollectionViewCalendarLayout.h; sourceTree = "<group>"; };
 		BD4DBC0C1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSCollectionViewCalendarLayout.m; sourceTree = "<group>"; };
 		BD4DBC0E1B85F7AF00978F4B /* MWEventsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWEventsContainer.h; sourceTree = "<group>"; };
@@ -195,8 +201,12 @@
 				3A9EDBAF16DDA8620017C4ED /* MSDayColumnHeader.m */,
 				3A9EDB9A16DD94940017C4ED /* MSTimeRowHeaderBackground.h */,
 				3A9EDB9B16DD94940017C4ED /* MSTimeRowHeaderBackground.m */,
+				BD1941241B8DD10900D37054 /* TimeRowMinutesHeader.h */,
+				BD1941251B8DD10900D37054 /* TimeRowMinutesHeader.m */,
 				3A71A5BC16DF4CBC00AF09E5 /* MSDayColumnHeaderBackground.h */,
 				3A71A5BD16DF4CBC00AF09E5 /* MSDayColumnHeaderBackground.m */,
+				BD1941271B8E091900D37054 /* NonworkingHoursBackgroundView.h */,
+				BD1941281B8E091900D37054 /* NonworkingHoursBackgroundView.m */,
 				3A9EDB9716DD938A0017C4ED /* MSGridline.h */,
 				3A9EDB9816DD938A0017C4ED /* MSGridline.m */,
 				3A9EDBB616DE8FAF0017C4ED /* MSCurrentTimeGridline.h */,
@@ -354,7 +364,9 @@
 			files = (
 				BD4DBC191B8603BC00978F4B /* EXTScope.m in Sources */,
 				3A9EDB7D16DD8FF10017C4ED /* main.m in Sources */,
+				BD1941291B8E091900D37054 /* NonworkingHoursBackgroundView.m in Sources */,
 				BD4DBC181B8603BC00978F4B /* EXTRuntimeExtensions.m in Sources */,
+				BD1941261B8DD10900D37054 /* TimeRowMinutesHeader.m in Sources */,
 				3A9EDB8116DD8FF10017C4ED /* MSAppDelegate.m in Sources */,
 				3A9EDB9416DD913A0017C4ED /* MSCalendarViewController.m in Sources */,
 				BD4DBC101B85F7AF00978F4B /* MWEventsContainer.m in Sources */,

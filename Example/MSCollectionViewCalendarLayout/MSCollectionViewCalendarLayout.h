@@ -29,18 +29,15 @@
 #import <UIKit/UIKit.h>
 
 extern NSString * const MSCollectionElementKindTimeRowHeader;
+extern NSString * const MSCollectionElementKindTimeRowHeaderMinutes;
 extern NSString * const MSCollectionElementKindDayColumnHeader;
 extern NSString * const MSCollectionElementKindTimeRowHeaderBackground;
 extern NSString * const MSCollectionElementKindDayColumnHeaderBackground;
+extern NSString * const MSCollectionElementKindNonworkingHoursBackground;
 extern NSString * const MSCollectionElementKindCurrentTimeIndicator;
 extern NSString * const MSCollectionElementKindCurrentTimeHorizontalGridline;
 extern NSString * const MSCollectionElementKindVerticalGridline;
 extern NSString * const MSCollectionElementKindHorizontalGridline;
-
-typedef NS_ENUM(NSUInteger, MSSectionLayoutType) {
-    MSSectionLayoutTypeHorizontalTile,
-    MSSectionLayoutTypeVerticalTile
-};
 
 typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
     MSHeaderLayoutTypeTimeRowAboveDayColumn,
@@ -65,7 +62,6 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 @property (nonatomic) UIEdgeInsets sectionMargin;
 @property (nonatomic) UIEdgeInsets contentMargin;
 @property (nonatomic) UIEdgeInsets cellMargin;
-@property (nonatomic) MSSectionLayoutType sectionLayoutType;
 @property (nonatomic) MSHeaderLayoutType headerLayoutType;
 @property (nonatomic) BOOL displayHeaderBackgroundAtOrigin;
 
@@ -73,6 +69,8 @@ typedef NS_ENUM(NSUInteger, MSHeaderLayoutType) {
 @property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 @property (assign, nonatomic) UIEdgeInsets scrollingTriggerEdgeInsets;
 @property (assign, nonatomic) CGFloat scrollingSpeed;
+@property (nonatomic, strong) NSDateComponents *startWorkingDay; // hours and minutes
+@property (nonatomic, strong) NSDateComponents *endWorkingDay; // hours and minutes
 
 - (NSDate *)dateForTimeRowHeaderAtIndexPath:(NSIndexPath *)indexPath;
 - (NSDate *)dateForDayColumnHeaderAtIndexPath:(NSIndexPath *)indexPath;

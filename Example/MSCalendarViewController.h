@@ -10,4 +10,7 @@
 
 @interface MSCalendarViewController : UICollectionViewController
 
+@property (nonatomic, strong) NSDateComponents *startWorkingDay; // hours and minutes
+@property (nonatomic, strong) NSDateComponents *endWorkingDay; // hours and minutes
+
 @end

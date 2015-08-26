@@ -19,10 +19,13 @@
 #import "MSCurrentTimeIndicator.h"
 #import "MSCurrentTimeGridline.h"
 #import "MWEventsContainer.h"
+#import "TimeRowMinutesHeader.h"
+#import "NonworkingHoursBackgroundView.h"
 
 NSString * const MSEventCellReuseIdentifier = @"MSEventCellReuseIdentifier";
 NSString * const MSDayColumnHeaderReuseIdentifier = @"MSDayColumnHeaderReuseIdentifier";
 NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifier";
+NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeaderReuseIdentifier";
 
 @interface MSCalendarViewController () <MSCollectionViewDelegateCalendarLayout, NSFetchedResultsControllerDelegate>
 
@@ -51,8 +54,11 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     [self.collectionView registerClass:MSEventCell.class forCellWithReuseIdentifier:MSEventCellReuseIdentifier];
     [self.collectionView registerClass:MSDayColumnHeader.class forSupplementaryViewOfKind:MSCollectionElementKindDayColumnHeader withReuseIdentifier:MSDayColumnHeaderReuseIdentifier];
     [self.collectionView registerClass:MSTimeRowHeader.class forSupplementaryViewOfKind:MSCollectionElementKindTimeRowHeader withReuseIdentifier:MSTimeRowHeaderReuseIdentifier];
+    [self.collectionView registerClass:TimeRowMinutesHeader.class forSupplementaryViewOfKind:MSCollectionElementKindTimeRowHeaderMinutes withReuseIdentifier:MSTimeRowMinutesHeaderReuseIdentifier];
     
     self.collectionViewCalendarLayout.sectionWidth = self.layoutSectionWidth;
+    self.collectionViewCalendarLayout.startWorkingDay = self.startWorkingDay;
+    self.collectionViewCalendarLayout.endWorkingDay = self.endWorkingDay;
     
     // These are optional. If you don't want any of the decoration views, just don't register a class for them.
     [self.collectionViewCalendarLayout registerClass:MSCurrentTimeIndicator.class forDecorationViewOfKind:MSCollectionElementKindCurrentTimeIndicator];
@@ -61,38 +67,10 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
     [self.collectionViewCalendarLayout registerClass:MSGridline.class forDecorationViewOfKind:MSCollectionElementKindHorizontalGridline];
     [self.collectionViewCalendarLayout registerClass:MSTimeRowHeaderBackground.class forDecorationViewOfKind:MSCollectionElementKindTimeRowHeaderBackground];
     [self.collectionViewCalendarLayout registerClass:MSDayColumnHeaderBackground.class forDecorationViewOfKind:MSCollectionElementKindDayColumnHeaderBackground];
+    [self.collectionViewCalendarLayout registerClass:NonworkingHoursBackgroundView.class forDecorationViewOfKind:MSCollectionElementKindNonworkingHoursBackground];
     
     self.eventsContainer = [MWEventsContainer new];
     self.eventsContainer.sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@keypath(MSEvent.new, start) ascending:YES];
-    
-    MSEvent *event = [MSEvent new];
-    event.remoteID = @1;
-    event.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60];
-    event.title = @"Event1";
-    event.location = @"Event1 location";
- 
-    MSEvent *event2 = [MSEvent new];
-    event2.remoteID = @2;
-    event2.start = [NSDate dateWithTimeIntervalSinceNow:2 * 60 * 60];
-    event2.title = @"Event2";
-    event2.location = @"Event2 location";
-
-    MSEvent *event3 = [MSEvent new];
-    event3.remoteID = @3;
-    event3.start = [NSDate dateWithTimeIntervalSinceNow:60 * 60 + 86400];
-    event3.title = @"Event3";
-    event3.location = @"Event3 location";
-
-    MSEvent *event4 = [MSEvent new];
-    event4.remoteID = @4;
-    event4.start = [NSDate dateWithTimeIntervalSinceNow:2 * 60 * 60 + 2 * 86400];
-    event4.title = @"Event4";
-    event4.location = @"Event4 location";
-
-//    [self.eventsContainer addEvent:event forDate:event.day];
-//    [self.eventsContainer addEvent:event2 forDate:event2.day];
-//    [self.eventsContainer addEvent:event3 forDate:event3.day];
-//    [self.eventsContainer addEvent:event4 forDate:event4.day];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -125,17 +103,7 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 
 - (CGFloat)layoutSectionWidth
 {
-    // Default to 254 on iPad.
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        return 138.0;
-    }
-
-    // Otherwise, on iPhone, fit-to-width.
-    CGFloat width = CGRectGetWidth(self.collectionView.bounds);
-    CGFloat timeRowHeaderWidth = self.collectionViewCalendarLayout.timeRowHeaderWidth;
-    CGFloat rightMargin = self.collectionViewCalendarLayout.contentMargin.right;
-
-    return (width - timeRowHeaderWidth - rightMargin);
+    return 138.0;
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate
@@ -182,10 +150,29 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
         dayColumnHeader.currentDay = [startOfDay isEqualToDate:startOfCurrentDay];
 
         view = dayColumnHeader;
-    } else if (kind == MSCollectionElementKindTimeRowHeader) {
+    }
+    else if (kind == MSCollectionElementKindTimeRowHeader) {
         MSTimeRowHeader *timeRowHeader = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:MSTimeRowHeaderReuseIdentifier forIndexPath:indexPath];
         timeRowHeader.time = [self.collectionViewCalendarLayout dateForTimeRowHeaderAtIndexPath:indexPath];
         view = timeRowHeader;
+    }
+    else if (kind == MSCollectionElementKindTimeRowHeaderMinutes) {
+        TimeRowMinutesHeader *timeRowMinutesHeader = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                                        withReuseIdentifier:MSTimeRowMinutesHeaderReuseIdentifier
+                                                                                               forIndexPath:indexPath];
+        NSString *text = nil;
+        NSInteger remainder = indexPath.row % 3;
+        if (remainder == 0) {
+            text = @":15";
+        }
+        else if (remainder == 1) {
+            text = @":30";
+        }
+        else if (remainder == 2) {
+            text = @":45";
+        }
+        timeRowMinutesHeader.title.text = text;
+        view = timeRowMinutesHeader;
     }
     return view;
 }
