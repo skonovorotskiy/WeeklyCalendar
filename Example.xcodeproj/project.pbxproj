@@ -33,8 +33,12 @@
 		BD1941291B8E091900D37054 /* NonworkingHoursBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = BD1941281B8E091900D37054 /* NonworkingHoursBackgroundView.m */; };
 		BD4DBC0D1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC0C1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m */; };
 		BD4DBC101B85F7AF00978F4B /* MWEventsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC0F1B85F7AF00978F4B /* MWEventsContainer.m */; };
-		BD4DBC181B8603BC00978F4B /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC141B8603BC00978F4B /* EXTRuntimeExtensions.m */; };
-		BD4DBC191B8603BC00978F4B /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = BD4DBC161B8603BC00978F4B /* EXTScope.m */; };
+		BDF9E5651B9457A400B051F9 /* CGHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF9E5571B9457A400B051F9 /* CGHelper.m */; };
+		BDF9E5661B9457A400B051F9 /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF9E55B1B9457A400B051F9 /* EXTRuntimeExtensions.m */; };
+		BDF9E5671B9457A400B051F9 /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF9E55D1B9457A400B051F9 /* EXTScope.m */; };
+		BDF9E5681B9457A400B051F9 /* NSDate+MWWeeklyCalendar.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF9E5601B9457A400B051F9 /* NSDate+MWWeeklyCalendar.m */; };
+		BDF9E5691B9457A400B051F9 /* NSDate+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF9E5621B9457A400B051F9 /* NSDate+Utilities.m */; };
+		BDF9E56A1B9457A400B051F9 /* UIColor+MWWeeklyCalendar.m in Sources */ = {isa = PBXBuildFile; fileRef = BDF9E5641B9457A400B051F9 /* UIColor+MWWeeklyCalendar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,12 +88,20 @@
 		BD4DBC0C1B85F6D500978F4B /* MSCollectionViewCalendarLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSCollectionViewCalendarLayout.m; sourceTree = "<group>"; };
 		BD4DBC0E1B85F7AF00978F4B /* MWEventsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWEventsContainer.h; sourceTree = "<group>"; };
 		BD4DBC0F1B85F7AF00978F4B /* MWEventsContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWEventsContainer.m; sourceTree = "<group>"; };
-		BD4DBC121B8603BC00978F4B /* EXTKeyPathCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTKeyPathCoding.h; sourceTree = "<group>"; };
-		BD4DBC131B8603BC00978F4B /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTRuntimeExtensions.h; sourceTree = "<group>"; };
-		BD4DBC141B8603BC00978F4B /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTRuntimeExtensions.m; sourceTree = "<group>"; };
-		BD4DBC151B8603BC00978F4B /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScope.h; sourceTree = "<group>"; };
-		BD4DBC161B8603BC00978F4B /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScope.m; sourceTree = "<group>"; };
-		BD4DBC171B8603BC00978F4B /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metamacros.h; sourceTree = "<group>"; };
+		BDF9E5561B9457A400B051F9 /* CGHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGHelper.h; sourceTree = "<group>"; };
+		BDF9E5571B9457A400B051F9 /* CGHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGHelper.m; sourceTree = "<group>"; };
+		BDF9E5591B9457A400B051F9 /* EXTKeyPathCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTKeyPathCoding.h; sourceTree = "<group>"; };
+		BDF9E55A1B9457A400B051F9 /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTRuntimeExtensions.h; sourceTree = "<group>"; };
+		BDF9E55B1B9457A400B051F9 /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTRuntimeExtensions.m; sourceTree = "<group>"; };
+		BDF9E55C1B9457A400B051F9 /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScope.h; sourceTree = "<group>"; };
+		BDF9E55D1B9457A400B051F9 /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScope.m; sourceTree = "<group>"; };
+		BDF9E55E1B9457A400B051F9 /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metamacros.h; sourceTree = "<group>"; };
+		BDF9E55F1B9457A400B051F9 /* NSDate+MWWeeklyCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+MWWeeklyCalendar.h"; sourceTree = "<group>"; };
+		BDF9E5601B9457A400B051F9 /* NSDate+MWWeeklyCalendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+MWWeeklyCalendar.m"; sourceTree = "<group>"; };
+		BDF9E5611B9457A400B051F9 /* NSDate+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Utilities.h"; sourceTree = "<group>"; };
+		BDF9E5621B9457A400B051F9 /* NSDate+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Utilities.m"; sourceTree = "<group>"; };
+		BDF9E5631B9457A400B051F9 /* UIColor+MWWeeklyCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+MWWeeklyCalendar.h"; sourceTree = "<group>"; };
+		BDF9E5641B9457A400B051F9 /* UIColor+MWWeeklyCalendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+MWWeeklyCalendar.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,7 +169,7 @@
 		3A9EDB7616DD8FF10017C4ED /* Example */ = {
 			isa = PBXGroup;
 			children = (
-				BD4DBC111B8603BC00978F4B /* extobjc */,
+				BDF9E5551B9457A400B051F9 /* Categories */,
 				BD4DBC0A1B85F6D500978F4B /* MSCollectionViewCalendarLayout */,
 				3A9EDB7F16DD8FF10017C4ED /* MSAppDelegate.h */,
 				3A9EDB8016DD8FF10017C4ED /* MSAppDelegate.m */,
@@ -246,15 +258,31 @@
 			path = MSCollectionViewCalendarLayout;
 			sourceTree = "<group>";
 		};
-		BD4DBC111B8603BC00978F4B /* extobjc */ = {
+		BDF9E5551B9457A400B051F9 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				BD4DBC121B8603BC00978F4B /* EXTKeyPathCoding.h */,
-				BD4DBC131B8603BC00978F4B /* EXTRuntimeExtensions.h */,
-				BD4DBC141B8603BC00978F4B /* EXTRuntimeExtensions.m */,
-				BD4DBC151B8603BC00978F4B /* EXTScope.h */,
-				BD4DBC161B8603BC00978F4B /* EXTScope.m */,
-				BD4DBC171B8603BC00978F4B /* metamacros.h */,
+				BDF9E5561B9457A400B051F9 /* CGHelper.h */,
+				BDF9E5571B9457A400B051F9 /* CGHelper.m */,
+				BDF9E5581B9457A400B051F9 /* extobjc */,
+				BDF9E55F1B9457A400B051F9 /* NSDate+MWWeeklyCalendar.h */,
+				BDF9E5601B9457A400B051F9 /* NSDate+MWWeeklyCalendar.m */,
+				BDF9E5611B9457A400B051F9 /* NSDate+Utilities.h */,
+				BDF9E5621B9457A400B051F9 /* NSDate+Utilities.m */,
+				BDF9E5631B9457A400B051F9 /* UIColor+MWWeeklyCalendar.h */,
+				BDF9E5641B9457A400B051F9 /* UIColor+MWWeeklyCalendar.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		BDF9E5581B9457A400B051F9 /* extobjc */ = {
+			isa = PBXGroup;
+			children = (
+				BDF9E5591B9457A400B051F9 /* EXTKeyPathCoding.h */,
+				BDF9E55A1B9457A400B051F9 /* EXTRuntimeExtensions.h */,
+				BDF9E55B1B9457A400B051F9 /* EXTRuntimeExtensions.m */,
+				BDF9E55C1B9457A400B051F9 /* EXTScope.h */,
+				BDF9E55D1B9457A400B051F9 /* EXTScope.m */,
+				BDF9E55E1B9457A400B051F9 /* metamacros.h */,
 			);
 			path = extobjc;
 			sourceTree = "<group>";
@@ -362,17 +390,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD4DBC191B8603BC00978F4B /* EXTScope.m in Sources */,
+				BDF9E56A1B9457A400B051F9 /* UIColor+MWWeeklyCalendar.m in Sources */,
+				BDF9E5671B9457A400B051F9 /* EXTScope.m in Sources */,
 				3A9EDB7D16DD8FF10017C4ED /* main.m in Sources */,
 				BD1941291B8E091900D37054 /* NonworkingHoursBackgroundView.m in Sources */,
-				BD4DBC181B8603BC00978F4B /* EXTRuntimeExtensions.m in Sources */,
 				BD1941261B8DD10900D37054 /* TimeRowMinutesHeader.m in Sources */,
+				BDF9E5651B9457A400B051F9 /* CGHelper.m in Sources */,
+				BDF9E5661B9457A400B051F9 /* EXTRuntimeExtensions.m in Sources */,
 				3A9EDB8116DD8FF10017C4ED /* MSAppDelegate.m in Sources */,
 				3A9EDB9416DD913A0017C4ED /* MSCalendarViewController.m in Sources */,
 				BD4DBC101B85F7AF00978F4B /* MWEventsContainer.m in Sources */,
+				BDF9E5681B9457A400B051F9 /* NSDate+MWWeeklyCalendar.m in Sources */,
 				3A9EDB9916DD938A0017C4ED /* MSGridline.m in Sources */,
 				3A9EDB9C16DD94940017C4ED /* MSTimeRowHeaderBackground.m in Sources */,
 				3A9EDBA216DD99E00017C4ED /* MSEvent.m in Sources */,
+				BDF9E5691B9457A400B051F9 /* NSDate+Utilities.m in Sources */,
 				3A9EDBAA16DDA7410017C4ED /* MSEventCell.m in Sources */,
 				3A9EDBAD16DDA8420017C4ED /* MSTimeRowHeader.m in Sources */,
 				3A9EDBB016DDA8620017C4ED /* MSDayColumnHeader.m in Sources */,

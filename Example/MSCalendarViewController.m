@@ -21,6 +21,12 @@
 #import "MWEventsContainer.h"
 #import "TimeRowMinutesHeader.h"
 #import "NonworkingHoursBackgroundView.h"
+#import "NSDate+MWWeeklyCalendar.h"
+#import "CGHelper.h"
+
+#define kNumberOfRealPages      3
+#define kNumberOfVirtualPages   (kNumberOfRealPages + 2)
+#define D_DAY		86400
 
 NSString * const MSEventCellReuseIdentifier = @"MSEventCellReuseIdentifier";
 NSString * const MSDayColumnHeaderReuseIdentifier = @"MSDayColumnHeaderReuseIdentifier";
@@ -28,7 +34,9 @@ NSString * const MSTimeRowHeaderReuseIdentifier = @"MSTimeRowHeaderReuseIdentifi
 NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeaderReuseIdentifier";
 
 @interface MSCalendarViewController () <MSCollectionViewDelegateCalendarLayout, NSFetchedResultsControllerDelegate>
-
+{
+    NSInteger _todaysDayIndex;
+}
 @property (nonatomic, strong) MSCollectionViewCalendarLayout *collectionViewCalendarLayout;
 @property (nonatomic, readonly) CGFloat layoutSectionWidth;
 @property (nonatomic, strong) MWEventsContainer *eventsContainer;
@@ -42,6 +50,10 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     self.collectionViewCalendarLayout = [[MSCollectionViewCalendarLayout alloc] init];
     self.collectionViewCalendarLayout.delegate = self;
     self = [super initWithCollectionViewLayout:self.collectionViewCalendarLayout];
+    if (self) {
+        self.numberOfVisibleDays = 7;
+        _todaysDayIndex = (kNumberOfVirtualPages / 2) * self.numberOfVisibleDays  + [[NSDate date] dateComponents].weekday - 1;
+    }
     return self;
 }
 
@@ -55,6 +67,8 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     [self.collectionView registerClass:MSDayColumnHeader.class forSupplementaryViewOfKind:MSCollectionElementKindDayColumnHeader withReuseIdentifier:MSDayColumnHeaderReuseIdentifier];
     [self.collectionView registerClass:MSTimeRowHeader.class forSupplementaryViewOfKind:MSCollectionElementKindTimeRowHeader withReuseIdentifier:MSTimeRowHeaderReuseIdentifier];
     [self.collectionView registerClass:TimeRowMinutesHeader.class forSupplementaryViewOfKind:MSCollectionElementKindTimeRowHeaderMinutes withReuseIdentifier:MSTimeRowMinutesHeaderReuseIdentifier];
+    
+    self.collectionView.showsHorizontalScrollIndicator = NO;
     
     self.collectionViewCalendarLayout.sectionWidth = self.layoutSectionWidth;
     self.collectionViewCalendarLayout.startWorkingDay = self.startWorkingDay;
@@ -71,6 +85,10 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     
     self.eventsContainer = [MWEventsContainer new];
     self.eventsContainer.sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@keypath(MSEvent.new, start) ascending:YES];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.collectionView  setContentOffset:CGPointMake( (self->_todaysDayIndex / self->_numberOfVisibleDays) * [self pageWidth], self.collectionView.contentOffset.y) animated:YES];
+    });
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -99,11 +117,75 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     return YES;
 }
 
+-(void)scrollToDate:(NSDate*)targetDate animated:(BOOL)animated
+{
+
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    static CGFloat lastContentOffsetX = FLT_MIN;
+    if (FLT_MIN == lastContentOffsetX) {
+        lastContentOffsetX = scrollView.contentOffset.x;
+        return;
+    }
+    CGFloat currentOffsetX = scrollView.contentOffset.x;
+    CGFloat currentOffsetY = scrollView.contentOffset.y;
+    CGFloat oneDayPageWidth = self.dayColumnWidth;
+    CGFloat pageWidth = oneDayPageWidth * self.numberOfVisibleDays;
+    CGFloat offset = pageWidth * kNumberOfRealPages;
+    
+    // the first page(showing the last item) is visible and user is still scrolling to the left
+    if (currentOffsetX < pageWidth && lastContentOffsetX > currentOffsetX) {
+        lastContentOffsetX = currentOffsetX + offset;
+        scrollView.contentOffset = (CGPoint){lastContentOffsetX, currentOffsetY};
+        _todaysDayIndex += kNumberOfRealPages * self.numberOfVisibleDays;
+    }
+    // the last page (showing the first item) is visible and the user is still scrolling to the right
+    else if (currentOffsetX > offset && lastContentOffsetX < currentOffsetX) {
+        lastContentOffsetX = currentOffsetX - offset;
+        scrollView.contentOffset = (CGPoint){lastContentOffsetX, currentOffsetY};
+        _todaysDayIndex -= kNumberOfRealPages * self.numberOfVisibleDays;
+    }
+    else {
+        lastContentOffsetX = currentOffsetX;
+    }
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+
+}
+
+- (void)getPagingOffsetsForOffset:(CGFloat)offset forPageWidth:(CGFloat)pageWidth leftOffset:(out CGFloat*)leftOffset rigthOffset:(out CGFloat*)rightOffset
+{
+    int fullPages = (int)( offset / pageWidth );
+    if (leftOffset){
+        *leftOffset = fullPages * pageWidth;
+    }
+    
+    if (rightOffset){
+        *rightOffset = (fullPages + 1) * pageWidth;
+    }
+}
+
 #pragma mark - MSCalendarViewController
 
 - (CGFloat)layoutSectionWidth
 {
     return 138.0;
+}
+
+- (CGFloat)pageWidth
+{
+    return self.dayColumnWidth * self.numberOfVisibleDays;
+}
+
+- (CGFloat)dayColumnWidth
+{
+    return roundTo1Px( self.collectionView.frame.size.width / self.numberOfVisibleDays );
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate
@@ -118,7 +200,7 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-    return 20;
+    return _numberOfVisibleDays * kNumberOfVirtualPages;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -184,14 +266,15 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 
 - (NSDate *)dateForSection:(NSInteger)section
 {
-    NSDate *date = [[NSCalendar currentCalendar] startOfDayForDate:[NSDate dateWithTimeIntervalSinceNow:(section * 86400)]]; // 86400 - seconds per 24 hours
+    NSInteger daysAfterToday = section - _todaysDayIndex;
+    NSDate *date = [[NSCalendar currentCalendar] startOfDayForDate:[NSDate dateWithTimeIntervalSinceNow:(daysAfterToday * D_DAY)]];
     return date;
 }
 
 - (NSInteger)sectionForDate:(NSDate *)date
 {
     NSDate *startOfToday = [[NSCalendar currentCalendar] startOfDayForDate:[NSDate date]];
-    return roundf([date timeIntervalSinceDate:startOfToday] / 86400); // 86400 - seconds per 24 hours
+    return roundf([date timeIntervalSinceDate:startOfToday] / D_DAY) + _todaysDayIndex;
 }
 
 - (MSEvent *)eventForIndexPath:(NSIndexPath *)indexPath
