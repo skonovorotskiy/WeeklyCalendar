@@ -104,6 +104,9 @@
 
 - (void)setEvent:(MSEvent *)event
 {
+    if (event == nil) {
+        return;
+    }
     _event = event;
     self.title.attributedText = [[NSAttributedString alloc] initWithString:event.title attributes:[self titleAttributesHighlighted:_cellSelected]];
     self.location.attributedText = [[NSAttributedString alloc] initWithString:event.location attributes:[self subtitleAttributesHighlighted:_cellSelected]];;
