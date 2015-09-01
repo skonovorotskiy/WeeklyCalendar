@@ -41,6 +41,7 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 @property (nonatomic, strong) MSCollectionViewCalendarLayout *collectionViewCalendarLayout;
 @property (nonatomic, readonly) CGFloat layoutSectionWidth;
 @property (nonatomic, strong) MWEventsContainer *eventsContainer;
+@property (nonatomic, strong) id selectedEvent;
 
 @end
 
@@ -213,7 +214,10 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     MSEventCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:MSEventCellReuseIdentifier forIndexPath:indexPath];
-    cell.event = [self eventForIndexPath:indexPath];
+    MSEvent *event = [self eventForIndexPath:indexPath];
+    BOOL cellSelected = (self.selectedEvent == event);
+    [cell setCellSelected:cellSelected animated:NO];
+    cell.event = event;
     cell.alpha = 1.0;
     return cell;
 }
@@ -262,7 +266,28 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    id currentEvent = [self eventForIndexPath:indexPath];
+    MSEventCell *lastSelectedCell = nil;
+    NSIndexPath *lastSelectedEventIndexPath = nil;
+    id lastSelectedEvent = self.selectedEvent;
+    if (lastSelectedEvent) {
+        lastSelectedEventIndexPath = [self indexPathForEvent:lastSelectedEvent];
+    }
+    if (lastSelectedEventIndexPath) {
+        lastSelectedCell = (MSEventCell *)[collectionView cellForItemAtIndexPath:lastSelectedEventIndexPath];
+    }
+    if (lastSelectedEvent == currentEvent) {
+        [lastSelectedCell setCellSelected:NO animated:YES];
+        self.selectedEvent = nil;
+    }
+    else {
+        if (lastSelectedEvent) {
+            [lastSelectedCell setCellSelected:NO animated:YES];
+        }
+        self.selectedEvent = currentEvent;
+        MSEventCell *newSelectedCell = (MSEventCell *)[collectionView cellForItemAtIndexPath:indexPath];
+        [newSelectedCell setCellSelected:YES animated:YES];
+    }
 }
 
 - (NSDate *)dateForSection:(NSInteger)section
@@ -283,6 +308,12 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     NSArray *events = [self.eventsContainer eventsForDay:[self dateForSection:indexPath.section]];
     MSEvent *event = events[indexPath.row];
     return event;
+}
+
+- (NSIndexPath *)indexPathForEvent:(MSEvent *)event
+{
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.eventsContainer indexForEvent:event withDate:event.day] inSection:[self sectionForDate:event.day]];
+    return indexPath;
 }
 
 #pragma mark - MSCollectionViewCalendarLayout
@@ -323,8 +354,7 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 {
     MSEvent *event = [self eventForDate:date];
     [self.eventsContainer addEvent:event forDate:event.day];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.eventsContainer indexForEvent:event withDate:event.day] inSection:[self sectionForDate:event.day]];
-    return indexPath;
+    return [self indexPathForEvent:event];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView removeItemAtIndexPath:(NSIndexPath *)indexPath

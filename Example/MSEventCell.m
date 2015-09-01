@@ -10,7 +10,9 @@
 #import "MSEvent.h"
 
 @interface MSEventCell ()
-
+{
+    BOOL _cellSelected;
+}
 @property (nonatomic, strong) UIView *borderView;
 
 @end
@@ -76,9 +78,9 @@
 
 #pragma mark - UICollectionViewCell
 
-- (void)setSelected:(BOOL)selected
+- (void)setCellSelected:(BOOL)selected animated:(BOOL)animated
 {
-    if (selected && (self.selected != selected)) {
+    if (selected && animated) {
         [UIView animateWithDuration:0.1 animations:^{
             self.transform = CGAffineTransformMakeScale(1.025, 1.025);
             self.layer.shadowOpacity = 0.2;
@@ -87,12 +89,14 @@
                 self.transform = CGAffineTransformIdentity;
             }];
         }];
-    } else if (selected) {
+    }
+    else if (selected) {
         self.layer.shadowOpacity = 0.2;
-    } else {
+    }
+    else {
         self.layer.shadowOpacity = 0.0;
     }
-    [super setSelected:selected]; // Must be here for animation to fire
+    _cellSelected = selected;
     [self updateColors];
 }
 
@@ -101,16 +105,16 @@
 - (void)setEvent:(MSEvent *)event
 {
     _event = event;
-    self.title.attributedText = [[NSAttributedString alloc] initWithString:event.title attributes:[self titleAttributesHighlighted:self.selected]];
-    self.location.attributedText = [[NSAttributedString alloc] initWithString:event.location attributes:[self subtitleAttributesHighlighted:self.selected]];;
+    self.title.attributedText = [[NSAttributedString alloc] initWithString:event.title attributes:[self titleAttributesHighlighted:_cellSelected]];
+    self.location.attributedText = [[NSAttributedString alloc] initWithString:event.location attributes:[self subtitleAttributesHighlighted:_cellSelected]];;
 }
 
 - (void)updateColors
 {
-    self.contentView.backgroundColor = [self backgroundColorHighlighted:self.selected];
+    self.contentView.backgroundColor = [self backgroundColorHighlighted:_cellSelected];
     self.borderView.backgroundColor = [self borderColor];
-    self.title.textColor = [self textColorHighlighted:self.selected];
-    self.location.textColor = [self textColorHighlighted:self.selected];
+    self.title.textColor = [self textColorHighlighted:_cellSelected];
+    self.location.textColor = [self textColorHighlighted:_cellSelected];
 }
 
 - (NSDictionary *)titleAttributesHighlighted:(BOOL)highlighted
@@ -162,7 +166,7 @@
     cell.event = self.event;
     cell.title = self.title;
     cell.location = self.location;
-    cell.selected = self.selected;
+    cell->_cellSelected = _cellSelected;
     return cell;
 }
 

@@ -17,4 +17,6 @@
 @property (nonatomic, strong) UILabel *title;
 @property (nonatomic, strong) UILabel *location;
 
+- (void)setCellSelected:(BOOL)selected animated:(BOOL)animated;
+
 @end
