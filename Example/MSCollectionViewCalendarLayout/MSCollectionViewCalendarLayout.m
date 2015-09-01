@@ -265,17 +265,19 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
     
     // Nonworking Hours
     UICollectionViewLayoutAttributes *topNonworkingHoursBackgroundAttributes = [self layoutAttributesForDecorationViewAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] ofKind:MSCollectionElementKindNonworkingHoursBackground withItemCache:self.nonWorkingHoursBackgroundAttributes];
+    CGFloat topNonWorkingHoursHeight = self.hourHeight * (self.startWorkingDay.hour + (self.startWorkingDay.minute / 60.) - earliestHour);
     topNonworkingHoursBackgroundAttributes.frame = CGRectMake(self.collectionView.contentOffset.x,
                                                               self.contentMargin.top + self.sectionMargin.top + 1,
                                                               calendarGridWidth + self.contentMargin.right,
-                                                              800);
+                                                              self.contentMargin.top + self.sectionMargin.top + topNonWorkingHoursHeight);
     topNonworkingHoursBackgroundAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindNonworkingHoursBackground];
     
     UICollectionViewLayoutAttributes *bottomNonworkingHoursBackgroundAttributes = [self layoutAttributesForDecorationViewAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0] ofKind:MSCollectionElementKindNonworkingHoursBackground withItemCache:self.nonWorkingHoursBackgroundAttributes];
+    CGFloat bottomNonWorkingHoursHeight = self.hourHeight * (latestHour - (self.endWorkingDay.hour + (self.endWorkingDay.minute / 60.)));
     bottomNonworkingHoursBackgroundAttributes.frame = CGRectMake(self.collectionView.contentOffset.x,
-                                                                 self.contentMargin.top + self.sectionMargin.top + self.sectionMargin.bottom + sectionHeight - 400,
+                                                                 self.sectionMargin.top + self.sectionMargin.bottom + sectionHeight - bottomNonWorkingHoursHeight,
                                                                  calendarGridWidth + self.contentMargin.right,
-                                                                 400);
+                                                                 bottomNonWorkingHoursHeight + self.sectionMargin.bottom + self.contentMargin.bottom);
     bottomNonworkingHoursBackgroundAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindNonworkingHoursBackground];
     
     // Time Row Header
@@ -443,6 +445,7 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         CGFloat horizontalGridlineMinX = fmaxf(horizontalGridlineXOffset, self.collectionView.contentOffset.x + horizontalGridlineXOffset);
         CGFloat horizontalGridlineWidth = fminf(calendarGridWidth, self.collectionView.frame.size.width);
         horizontalGridlineAttributes.frame = CGRectMake(horizontalGridlineMinX, horizontalGridlineMinY, horizontalGridlineWidth, self.horizontalGridlineHeight);
+        horizontalGridlineAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindHorizontalGridline];
         horizontalGridlineIndex++;
     }
 }
