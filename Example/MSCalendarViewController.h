@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class MSEvent;
+
 @interface MSCalendarViewController : UICollectionViewController
 
 /*! Number of colums visible at the moment.
@@ -16,5 +18,9 @@
 
 @property (nonatomic, strong) NSDateComponents *startWorkingDay; // hours and minutes
 @property (nonatomic, strong) NSDateComponents *endWorkingDay; // hours and minutes
+
+- (void) addNewEvent;
+- (void) highlightEvent:(MSEvent *)event;
+
 
 @end

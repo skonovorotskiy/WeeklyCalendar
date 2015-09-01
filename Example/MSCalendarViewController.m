@@ -23,6 +23,7 @@
 #import "NonworkingHoursBackgroundView.h"
 #import "NSDate+MWWeeklyCalendar.h"
 #import "CGHelper.h"
+#import "NSDate+Utilities.h"
 
 #define kNumberOfRealPages      3
 #define kNumberOfVirtualPages   (kNumberOfRealPages + 2)
@@ -53,6 +54,7 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     if (self) {
         self.numberOfVisibleDays = 7;
         _todaysDayIndex = (kNumberOfVirtualPages / 2) * self.numberOfVisibleDays  + [[NSDate date] dateComponents].weekday - 1;
+        self.eventsContainer = [MWEventsContainer new];
     }
     return self;
 }
@@ -83,7 +85,6 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     [self.collectionViewCalendarLayout registerClass:MSDayColumnHeaderBackground.class forDecorationViewOfKind:MSCollectionElementKindDayColumnHeaderBackground];
     [self.collectionViewCalendarLayout registerClass:NonworkingHoursBackgroundView.class forDecorationViewOfKind:MSCollectionElementKindNonworkingHoursBackground];
     
-    self.eventsContainer = [MWEventsContainer new];
     self.eventsContainer.sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@keypath(MSEvent.new, start) ascending:YES];
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -300,7 +301,7 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 - (NSDate *)collectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout endTimeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     MSEvent *event = [self eventForIndexPath:indexPath];
-    return [event.start dateByAddingTimeInterval:(60 * 60 * 3)];
+    return [event.start dateByAddingTimeInterval:(60 * 60 * 1)];
 }
 
 - (NSDate *)currentTimeComponentsForCollectionView:(UICollectionView *)collectionView layout:(MSCollectionViewCalendarLayout *)collectionViewCalendarLayout
@@ -320,12 +321,7 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 
 - (NSIndexPath *)collectionView:(UICollectionView *)collectionView createNewItemWithDate:(NSDate *)date
 {
-    static int i = 5;
-    MSEvent *event = [MSEvent new];
-    event.remoteID = @(i);
-    event.start = date;
-    event.title = [NSString stringWithFormat:@"Event%d", i];
-    event.location = [NSString stringWithFormat:@"Event%d location", i++];
+    MSEvent *event = [self eventForDate:date];
     [self.eventsContainer addEvent:event forDate:event.day];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.eventsContainer indexForEvent:event withDate:event.day] inSection:[self sectionForDate:event.day]];
     return indexPath;
@@ -337,6 +333,45 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     if (event) {
         [self.eventsContainer removeEvent:event withDate:event.day];
     }
+}
+
+#pragma mark - Public methods
+
+- (void) addNewEvent
+{
+    NSDateComponents *currentDateComponents = [[NSDate date] dateComponents];
+    float step = 15;
+    float roundedMinutes = ceilf(currentDateComponents.minute / step) * step;
+    currentDateComponents.minute = roundedMinutes;
+    NSDate *roundedDate = [[NSCalendar currentCalendar] dateFromComponents:currentDateComponents];
+    
+    MSEvent *event = [self eventForDate:roundedDate];
+    [self.eventsContainer addEvent:event forDate:event.day];
+    
+    [self reloadCollectionView];
+}
+
+- (void) highlightEvent:(MSEvent *)event
+{
+}
+
+#pragma mark - Private methods
+
+- (MSEvent *) eventForDate:(NSDate *)date
+{
+    static int i = 5;
+    MSEvent *event = [MSEvent new];
+    event.remoteID = @(i);
+    event.start = date;
+    event.title = [NSString stringWithFormat:@"Event%d", i];
+    event.location = [NSString stringWithFormat:@"Event%d location", i++];
+    return event;
+}
+
+- (void) reloadCollectionView
+{
+    [self.collectionViewCalendarLayout invalidateLayoutCache];
+    [self.collectionView reloadData];
 }
 
 @end

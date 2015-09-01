@@ -21,6 +21,7 @@
     MSCalendarViewController *calendarViewController = [[MSCalendarViewController alloc] init];
     calendarViewController.startWorkingDay = [self dateComponentsWithHours:10 minutes:0];
     calendarViewController.endWorkingDay = [self dateComponentsWithHours:19 minutes:30];
+    [calendarViewController addNewEvent];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = calendarViewController;
