@@ -383,6 +383,13 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 
 - (void) highlightEvent:(MSEvent *)event
 {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSIndexPath *indexPath = [self indexPathForEvent:event];
+            MSEventCell *cell = (MSEventCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
+            [cell setCellSelected:YES animated:YES];
+        });
+    });
 }
 
 #pragma mark - Private methods
