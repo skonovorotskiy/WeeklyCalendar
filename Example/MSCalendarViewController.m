@@ -89,15 +89,8 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     self.eventsContainer.sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@keypath(MSEvent.new, start) ascending:YES];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.collectionView  setContentOffset:CGPointMake( (self->_todaysDayIndex / self->_numberOfVisibleDays) * [self pageWidth], self.collectionView.contentOffset.y) animated:YES];
+        [self.collectionView  setContentOffset:CGPointMake( (self->_todaysDayIndex / self->_numberOfVisibleDays) * [self pageWidth], self.collectionView.contentOffset.y) animated:NO];
     });
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-
-    [self.collectionViewCalendarLayout scrollCollectionViewToClosetSectionToCurrentTimeAnimated:NO];
 }
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
@@ -389,6 +382,11 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     NSIndexPath *indexPath = [self indexPathForEvent:event];
     MSEventCell *cell = (MSEventCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
     [cell setCellSelected:YES animated:YES];
+}
+
+- (void)scrollToWorkingHoursAnimated:(BOOL)animated
+{
+    [self.collectionViewCalendarLayout scrollToWorkingHoursAnimated:animated];
 }
 
 #pragma mark - Private methods

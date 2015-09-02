@@ -21,6 +21,6 @@
 
 - (MSEvent *) addNewEvent;
 - (void) highlightEvent:(MSEvent *)event;
-
+- (void)scrollToWorkingHoursAnimated:(BOOL)animated;
 
 @end

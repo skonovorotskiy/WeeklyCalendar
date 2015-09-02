@@ -844,32 +844,40 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
 
 - (void)scrollCollectionViewToClosetSectionToCurrentTimeAnimated:(BOOL)animated
 {
-    if (self.collectionView.numberOfSections != 0) {
-        NSInteger closestSectionToCurrentTime = [self closestSectionToCurrentTime];
-        CGRect currentTimeHorizontalGridlineattributesFrame = [self.currentTimeHorizontalGridlineAttributes[[NSIndexPath indexPathForItem:0 inSection:0]] frame];
-            CGFloat yOffset;
-        if (!CGRectEqualToRect(currentTimeHorizontalGridlineattributesFrame, CGRectZero)) {
-            yOffset = nearbyintf(CGRectGetMinY(currentTimeHorizontalGridlineattributesFrame) - (CGRectGetHeight(self.collectionView.frame) / 2.0));
-        } else {
-            yOffset = 0.0;
-        }
-        CGFloat xOffset = self.contentMargin.left + ((self.sectionMargin.left + self.sectionWidth + self.sectionMargin.right) * closestSectionToCurrentTime);
-        CGPoint contentOffset = CGPointMake(xOffset, yOffset);
-        // Prevent the content offset from forcing the scroll view content off its bounds
-        if (contentOffset.y > (self.collectionView.contentSize.height - self.collectionView.frame.size.height)) {
-            contentOffset.y = (self.collectionView.contentSize.height - self.collectionView.frame.size.height);
-        }
-        if (contentOffset.y < 0.0) {
-            contentOffset.y = 0.0;
-        }
-        if (contentOffset.x > (self.collectionView.contentSize.width - self.collectionView.frame.size.width)) {
-            contentOffset.x = (self.collectionView.contentSize.width - self.collectionView.frame.size.width);
-        }
-        if (contentOffset.x < 0.0) {
-            contentOffset.x = 0.0;
-        }
-        [self.collectionView setContentOffset:contentOffset animated:animated];
+    NSInteger closestSectionToCurrentTime = [self closestSectionToCurrentTime];
+    CGRect currentTimeHorizontalGridlineattributesFrame = [self.currentTimeHorizontalGridlineAttributes[[NSIndexPath indexPathForItem:0 inSection:0]] frame];
+    CGFloat yOffset;
+    if (!CGRectEqualToRect(currentTimeHorizontalGridlineattributesFrame, CGRectZero)) {
+        yOffset = nearbyintf(CGRectGetMinY(currentTimeHorizontalGridlineattributesFrame) - (CGRectGetHeight(self.collectionView.frame) / 2.0));
+    } else {
+        yOffset = 0.0;
     }
+    CGFloat xOffset = self.contentMargin.left + ((self.sectionMargin.left + self.sectionWidth + self.sectionMargin.right) * closestSectionToCurrentTime);
+    CGPoint contentOffset = CGPointMake(xOffset, yOffset);
+    // Prevent the content offset from forcing the scroll view content off its bounds
+    if (contentOffset.y > (self.collectionView.contentSize.height - self.collectionView.frame.size.height)) {
+        contentOffset.y = (self.collectionView.contentSize.height - self.collectionView.frame.size.height);
+    }
+    if (contentOffset.y < 0.0) {
+        contentOffset.y = 0.0;
+    }
+    if (contentOffset.x > (self.collectionView.contentSize.width - self.collectionView.frame.size.width)) {
+        contentOffset.x = (self.collectionView.contentSize.width - self.collectionView.frame.size.width);
+    }
+    if (contentOffset.x < 0.0) {
+        contentOffset.x = 0.0;
+    }
+    [self.collectionView setContentOffset:contentOffset animated:animated];
+}
+
+- (void)scrollToWorkingHoursAnimated:(BOOL)animated
+{
+    CGPoint contentOffset = self.collectionView.contentOffset;
+    CGFloat topNonWorkingHoursHeight = self.hourHeight * (self.startWorkingDay.hour + (self.startWorkingDay.minute / 60.) - self.earliestHour);
+    CGFloat indent = 10;
+    CGFloat yOffset = self.contentMargin.top + self.sectionMargin.top + topNonWorkingHoursHeight - indent;
+    contentOffset.y = yOffset;
+    [self.collectionView setContentOffset:contentOffset animated:animated];
 }
 
 - (NSInteger)closestSectionToCurrentTime

@@ -24,6 +24,7 @@
     MSEvent *event = [calendarViewController addNewEvent];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [calendarViewController highlightEvent:event];
+        [calendarViewController scrollToWorkingHoursAnimated:YES];
     });
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
