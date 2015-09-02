@@ -154,7 +154,8 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     else {
         lastContentOffsetX = currentOffsetX;
     }
-    [self reloadCollectionView];
+#warning too expensive operation for use it in this place
+//    [self reloadCollectionView];
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
@@ -368,7 +369,7 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
 
 #pragma mark - Public methods
 
-- (void) addNewEvent
+- (MSEvent *) addNewEvent
 {
     NSDateComponents *currentDateComponents = [[NSDate date] dateComponents];
     float step = 15;
@@ -380,17 +381,14 @@ NSString * const MSTimeRowMinutesHeaderReuseIdentifier = @"MSTimeRowMinutesHeade
     [self.eventsContainer addEvent:event forDate:event.day];
     
     [self reloadCollectionView];
+    return event;
 }
 
 - (void) highlightEvent:(MSEvent *)event
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSIndexPath *indexPath = [self indexPathForEvent:event];
-            MSEventCell *cell = (MSEventCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
-            [cell setCellSelected:YES animated:YES];
-        });
-    });
+    NSIndexPath *indexPath = [self indexPathForEvent:event];
+    MSEventCell *cell = (MSEventCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
+    [cell setCellSelected:YES animated:YES];
 }
 
 #pragma mark - Private methods

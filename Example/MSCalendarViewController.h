@@ -19,7 +19,7 @@
 @property (nonatomic, strong) NSDateComponents *startWorkingDay; // hours and minutes
 @property (nonatomic, strong) NSDateComponents *endWorkingDay; // hours and minutes
 
-- (void) addNewEvent;
+- (MSEvent *) addNewEvent;
 - (void) highlightEvent:(MSEvent *)event;
 
 
