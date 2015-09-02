@@ -370,7 +370,9 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         timeRowHeaderMinutesIndex++;
     }
     
-    BOOL needsToPopulateVerticalGridlineAttributes = (self.verticalGridlineAttributes.count == 0);
+    BOOL needsToPopulateVerticalGridlineAttributes = (self.verticalGridlineAttributes.count == 0);    
+    BOOL needsToPopulateItemAttributes = (self.itemAttributes.count == 0);
+    
     [sectionIndexes enumerateIndexesUsingBlock:^(NSUInteger section, BOOL *stop) {
         CGFloat sectionWidth = (self.sectionMargin.left + self.sectionWidth + self.sectionMargin.right);
         CGFloat sectionMinX = (self.calendarContentMinX + (sectionWidth * section));
@@ -380,7 +382,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
         dayColumnHeaderAttributes.frame = CGRectMake(sectionMinX, dayColumnHeaderMinY, self.sectionWidth, self.dayColumnHeaderHeight);
         dayColumnHeaderAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindDayColumnHeader floating:dayColumnHeaderFloating];
         
-        //BOOL needsToPopulateVerticalGridlineAttributes = (self.verticalGridlineAttributes.count == 0);
         if (needsToPopulateVerticalGridlineAttributes) {
             // Vertical Gridline
             NSIndexPath *verticalGridlineIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
@@ -391,7 +392,6 @@ static NSString * const kLXCollectionViewKeyPath = @"collectionView";
             horizontalGridlineAttributes.zIndex = [self zIndexForElementKind:MSCollectionElementKindVerticalGridline];
         }
         
-        BOOL needsToPopulateItemAttributes = (self.itemAttributes.count == 0);
         if (needsToPopulateItemAttributes) {
             // Items
             NSMutableArray *sectionItemAttributes = [NSMutableArray new];
